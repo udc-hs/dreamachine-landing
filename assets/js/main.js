@@ -1,5 +1,5 @@
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js';
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/GLTFLoader.js';
 
 // Scene setup
 const scene = new THREE.Scene();
@@ -11,11 +11,14 @@ document.getElementById("threeD-container").appendChild(renderer.domElement);
 
 // Load 3D model
 const loader = new GLTFLoader();
-loader.load('assets/models/destroyed_car_07_raw_scan_compressed.glb', (gltf) => {
+loader.load('models/destroyed_car_07_raw_scan_compressed.glb', (gltf) => {
     const model = gltf.scene;
     model.scale.set(5, 5, 5);
     model.position.set(0, -2, 0);
     scene.add(model);
+
+    // Store model reference for interaction
+    interactiveModel = model;
 }, undefined, (error) => {
     console.error('Error loading model:', error);
 });
@@ -29,10 +32,12 @@ scene.add(ambientLight, directionalLight);
 // Camera Position
 camera.position.set(0, 2, 15);
 
-// Interaction
+// Interaction - Rotate Model on Click
+let interactiveModel = null;
 window.addEventListener("click", () => {
-    camera.position.x += (Math.random() - 0.5) * 2;
-    camera.position.y += (Math.random() - 0.5) * 2;
+    if (interactiveModel) {
+        interactiveModel.rotation.y += 0.5;
+    }
 });
 
 // Animation Loop
@@ -40,7 +45,6 @@ function animate() {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
 }
-
 animate();
 
 // Responsive Resizing
