@@ -11,7 +11,7 @@ document.getElementById("threeD-container").appendChild(renderer.domElement);
 
 // Load 3D model
 const loader = new GLTFLoader();
-loader.load('assets/models/destroyed_car.glb', (gltf) => {
+loader.load('assets/models/destroyed_car_07_raw_scan_compressed.glb', (gltf) => {
     const model = gltf.scene;
     model.scale.set(5, 5, 5);
     model.position.set(0, -2, 0);
