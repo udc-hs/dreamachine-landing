@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.min.js';
+import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js';
 
 // Scene setup
 const scene = new THREE.Scene();
@@ -23,16 +23,25 @@ scene.add(ambientLight, directionalLight);
 // Camera Position
 camera.position.set(0, 5, 20);
 
-// Interaction - Rotate Torus Knot on Click
+// Smooth Rotation Variables
+let targetRotationY = 0;
+let rotationSpeed = 0.05;
+
+// Interaction - Rotate Torus Knot on Click Smoothly
 window.addEventListener("click", () => {
-    torusKnot.rotation.y += 0.5;
+    targetRotationY += 0.5;
 });
 
 // Animation Loop
 function animate() {
     requestAnimationFrame(animate);
-    torusKnot.rotation.x += 0.01;
-    torusKnot.rotation.y += 0.01;
+
+    // Smooth rotation towards target
+    torusKnot.rotation.y += (targetRotationY - torusKnot.rotation.y) * rotationSpeed;
+
+    // Slight continuous rotation
+    torusKnot.rotation.x += 0.005;
+
     renderer.render(scene, camera);
 }
 animate();
