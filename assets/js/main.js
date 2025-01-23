@@ -9,14 +9,11 @@ const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById("threeD-container").appendChild(renderer.domElement);
 
-// Lighting Fix for Mobile
-const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.5);
-hemiLight.position.set(0, 20, 0);
-scene.add(hemiLight);
-
-const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+// Lighting (Standard for Desktop)
+const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
 directionalLight.position.set(5, 10, 7.5);
-scene.add(directionalLight);
+scene.add(ambientLight, directionalLight);
 
 // Load Model
 const loader = new GLTFLoader();
@@ -40,7 +37,7 @@ loader.load(MODEL_URL, (gltf) => {
 // Camera Position
 camera.position.set(0, 5, 20);
 
-// Interaction - Click & Drag Rotation
+// Click & Drag Rotation
 let isDragging = false;
 let previousMouseX = 0;
 let previousMouseY = 0;
