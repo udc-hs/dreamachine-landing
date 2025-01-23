@@ -1,5 +1,4 @@
-import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js';
-import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/GLTFLoader.js';
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.min.js';
 
 // Scene setup
 const scene = new THREE.Scene();
@@ -9,7 +8,7 @@ const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById("threeD-container").appendChild(renderer.domElement);
 
-// Placeholder Torus Knot instead of GLB model
+// Placeholder Torus Knot
 const geometry = new THREE.TorusKnotGeometry(5, 1.5, 100, 16);
 const material = new THREE.MeshStandardMaterial({ color: 0xff5500, metalness: 0.8, roughness: 0.2 });
 const torusKnot = new THREE.Mesh(geometry, material);
