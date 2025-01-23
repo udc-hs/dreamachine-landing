@@ -1,4 +1,5 @@
 import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js';
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/GLTFLoader.js';
 
 // Scene setup
 const scene = new THREE.Scene();
@@ -7,12 +8,6 @@ const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById("threeD-container").appendChild(renderer.domElement);
-
-// Placeholder Torus Knot
-const geometry = new THREE.TorusKnotGeometry(5, 1.5, 100, 16);
-const material = new THREE.MeshStandardMaterial({ color: 0xff5500, metalness: 0.8, roughness: 0.2 });
-const torusKnot = new THREE.Mesh(geometry, material);
-scene.add(torusKnot);
 
 // Lighting
 const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
@@ -23,24 +18,37 @@ scene.add(ambientLight, directionalLight);
 // Camera Position
 camera.position.set(0, 5, 20);
 
+// Load 3D Car Model
+const loader = new GLTFLoader();
+let carModel = null;
+loader.load('./assets/models/destroyed_car_07_raw_scan_compressed.glb', (gltf) => {
+    carModel = gltf.scene;
+    carModel.scale.set(5, 5, 5);
+    carModel.position.set(0, -2, 0);
+    scene.add(carModel);
+}, undefined, (error) => {
+    console.error('Error loading car model:', error);
+});
+
 // Smooth Rotation Variables
 let targetRotationY = 0;
 let rotationSpeed = 0.05;
 
-// Interaction - Rotate Torus Knot on Click Smoothly
+// Interaction - Rotate Car on Click Smoothly
 window.addEventListener("click", () => {
-    targetRotationY += 0.5;
+    if (carModel) {
+        targetRotationY += 0.5;
+    }
 });
 
 // Animation Loop
 function animate() {
     requestAnimationFrame(animate);
 
-    // Smooth rotation towards target
-    torusKnot.rotation.y += (targetRotationY - torusKnot.rotation.y) * rotationSpeed;
-
-    // Slight continuous rotation
-    torusKnot.rotation.x += 0.005;
+    // Ensure car model is loaded before rotating
+    if (carModel) {
+        carModel.rotation.y += (targetRotationY - carModel.rotation.y) * rotationSpeed;
+    }
 
     renderer.render(scene, camera);
 }
