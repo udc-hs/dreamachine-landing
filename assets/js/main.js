@@ -36,12 +36,33 @@ scene.add(ambientLight, directionalLight);
 // Camera Position
 camera.position.set(0, 5, 20);
 
-// Interaction - Rotate Model on Click
+// Interaction - Click & Drag Rotation
 let interactiveModel = null;
-window.addEventListener("click", () => {
-    if (interactiveModel) {
-        interactiveModel.rotation.y += 0.5;
+let isDragging = false;
+let previousMouseX = 0;
+let previousMouseY = 0;
+
+window.addEventListener("mousedown", (event) => {
+    isDragging = true;
+    previousMouseX = event.clientX;
+    previousMouseY = event.clientY;
+});
+
+window.addEventListener("mousemove", (event) => {
+    if (isDragging && interactiveModel) {
+        const deltaX = event.clientX - previousMouseX;
+        const deltaY = event.clientY - previousMouseY;
+
+        interactiveModel.rotation.y += deltaX * 0.01;
+        interactiveModel.rotation.x += deltaY * 0.01;
+
+        previousMouseX = event.clientX;
+        previousMouseY = event.clientY;
     }
+});
+
+window.addEventListener("mouseup", () => {
+    isDragging = false;
 });
 
 // Mouse Scroll Zoom Control
