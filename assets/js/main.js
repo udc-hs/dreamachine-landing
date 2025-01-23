@@ -13,8 +13,8 @@ document.getElementById("threeD-container").appendChild(renderer.domElement);
 const loader = new GLTFLoader();
 loader.load('assets/models/destroyed_car_07_raw_scan_compressed.glb', (gltf) => {
     const model = gltf.scene;
-    model.scale.set(5, 5, 5);
-    model.position.set(0, -2, 0);
+    model.scale.set(10, 10, 10);  // Increased size for visibility
+    model.position.set(0, -2, 0);  // Adjusted position for proper placement
     scene.add(model);
 
     // Store model reference for interaction
@@ -24,13 +24,13 @@ loader.load('assets/models/destroyed_car_07_raw_scan_compressed.glb', (gltf) => 
 });
 
 // Lighting
-const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-directionalLight.position.set(5, 10, 7.5);
+const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);  // Increased intensity
+const directionalLight = new THREE.DirectionalLight(0xffffff, 2); // Stronger directional light
+directionalLight.position.set(5, 10, 10);
 scene.add(ambientLight, directionalLight);
 
-// Camera Position
-camera.position.set(0, 2, 15);
+// Camera Position (ensuring it's properly placed to view the model)
+camera.position.set(0, 5, 20);
 
 // Interaction - Rotate Model on Click
 let interactiveModel = null;
