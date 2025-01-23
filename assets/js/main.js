@@ -9,40 +9,31 @@ const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById("threeD-container").appendChild(renderer.domElement);
 
-// Load 3D model
-const loader = new GLTFLoader();
-loader.load('assets/models/destroyed_car_07_raw_scan_compressed.glb', (gltf) => {
-    const model = gltf.scene;
-    model.scale.set(10, 10, 10);  // Increased size for visibility
-    model.position.set(0, -2, 0);  // Adjusted position for proper placement
-    scene.add(model);
-
-    // Store model reference for interaction
-    interactiveModel = model;
-}, undefined, (error) => {
-    console.error('Error loading model:', error);
-});
+// Placeholder Torus Knot instead of GLB model
+const geometry = new THREE.TorusKnotGeometry(5, 1.5, 100, 16);
+const material = new THREE.MeshStandardMaterial({ color: 0xff5500, metalness: 0.8, roughness: 0.2 });
+const torusKnot = new THREE.Mesh(geometry, material);
+scene.add(torusKnot);
 
 // Lighting
-const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);  // Increased intensity
-const directionalLight = new THREE.DirectionalLight(0xffffff, 2); // Stronger directional light
+const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
 directionalLight.position.set(5, 10, 10);
 scene.add(ambientLight, directionalLight);
 
-// Camera Position (ensuring it's properly placed to view the model)
+// Camera Position
 camera.position.set(0, 5, 20);
 
-// Interaction - Rotate Model on Click
-let interactiveModel = null;
+// Interaction - Rotate Torus Knot on Click
 window.addEventListener("click", () => {
-    if (interactiveModel) {
-        interactiveModel.rotation.y += 0.5;
-    }
+    torusKnot.rotation.y += 0.5;
 });
 
 // Animation Loop
 function animate() {
     requestAnimationFrame(animate);
+    torusKnot.rotation.x += 0.01;
+    torusKnot.rotation.y += 0.01;
     renderer.render(scene, camera);
 }
 animate();
