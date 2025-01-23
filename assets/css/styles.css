@@ -19,19 +19,6 @@ body, html {
     align-items: center;
 }
 
-.overlay {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    color: white;
-    background: rgba(0, 0, 0, 0.5);
-    padding: 10px 15px;
-    border-radius: 5px;
-    font-size: 14px;
-    user-select: none;
-    pointer-events: none;
-}
-
 @media screen and (max-width: 768px) {
     .overlay {
         font-size: 12px;
