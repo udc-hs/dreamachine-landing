@@ -9,6 +9,25 @@ const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById("threeD-container").appendChild(renderer.domElement);
 
+// Load the 3D model from Vercel Blob
+const loader = new GLTFLoader();
+loader.load(
+    'https://iswsz3cbm7tudiss.public.blob.vercel-storage.com/destroyed_car_07_raw_scan_compressed-pf4BnThyKKJfMbASae84IL1oaxKZP7.glb',
+    (gltf) => {
+        const model = gltf.scene;
+        model.scale.set(5, 5, 5);
+        model.position.set(0, -2, 0);
+        scene.add(model);
+
+        // Store model reference for interaction
+        interactiveModel = model;
+    },
+    undefined,
+    (error) => {
+        console.error("Error loading model:", error);
+    }
+);
+
 // Lighting
 const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
@@ -18,38 +37,17 @@ scene.add(ambientLight, directionalLight);
 // Camera Position
 camera.position.set(0, 5, 20);
 
-// Load 3D Car Model
-const loader = new GLTFLoader();
-let carModel = null;
-loader.load('./assets/models/destroyed_car_07_raw_scan_compressed.glb', (gltf) => {
-    carModel = gltf.scene;
-    carModel.scale.set(5, 5, 5);
-    carModel.position.set(0, -2, 0);
-    scene.add(carModel);
-}, undefined, (error) => {
-    console.error('Error loading car model:', error);
-});
-
-// Smooth Rotation Variables
-let targetRotationY = 0;
-let rotationSpeed = 0.05;
-
-// Interaction - Rotate Car on Click Smoothly
+// Interaction - Rotate Model on Click
+let interactiveModel = null;
 window.addEventListener("click", () => {
-    if (carModel) {
-        targetRotationY += 0.5;
+    if (interactiveModel) {
+        interactiveModel.rotation.y += 0.5;
     }
 });
 
 // Animation Loop
 function animate() {
     requestAnimationFrame(animate);
-
-    // Ensure car model is loaded before rotating
-    if (carModel) {
-        carModel.rotation.y += (targetRotationY - carModel.rotation.y) * rotationSpeed;
-    }
-
     renderer.render(scene, camera);
 }
 animate();
