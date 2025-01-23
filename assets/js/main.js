@@ -9,16 +9,17 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio); // Improve mobile rendering
 document.getElementById("threeD-container").appendChild(renderer.domElement);
 
-// Lighting
-const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
-const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+// ✅ Improved Lighting for Mobile Visibility
+const ambientLight = new THREE.AmbientLight(0xffffff, 2.5); // Increased intensity
+const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
 directionalLight.position.set(5, 10, 7.5);
 scene.add(ambientLight, directionalLight);
 
-// Camera Position
-camera.position.set(0, 2, 10);
+// ✅ Adjusted Camera Position to Fix Black Screen Issue
+camera.position.set(0, 3, 15); // Moved back slightly to ensure visibility
 
 // Load GLTF model with DRACO compression
 const loader = new GLTFLoader();
@@ -41,62 +42,65 @@ loader.load('https://iswsz3cbm7tudiss.public.blob.vercel-storage.com/destroyed_c
 let isDragging = false;
 let previousMousePosition = { x: 0, y: 0 };
 
-const onMouseDown = (event) => {
+const onPointerDown = (event) => {
     isDragging = true;
-    previousMousePosition = { x: event.clientX, y: event.clientY };
+    previousMousePosition = { x: event.clientX || event.touches[0].clientX, y: event.clientY || event.touches[0].clientY };
 };
 
-const onMouseMove = (event) => {
+const onPointerMove = (event) => {
     if (!isDragging || !interactiveModel) return;
 
-    const deltaX = event.clientX - previousMousePosition.x;
-    const deltaY = event.clientY - previousMousePosition.y;
+    const x = event.clientX || event.touches[0].clientX;
+    const y = event.clientY || event.touches[0].clientY;
 
-    interactiveModel.rotation.y += deltaX * 0.005; // Adjust speed of rotation
-    interactiveModel.rotation.x += deltaY * 0.005;
-
-    previousMousePosition = { x: event.clientX, y: event.clientY };
-};
-
-const onMouseUp = () => {
-    isDragging = false;
-};
-
-// Touch event handling for mobile
-const onTouchStart = (event) => {
-    isDragging = true;
-    previousMousePosition = { x: event.touches[0].clientX, y: event.touches[0].clientY };
-};
-
-const onTouchMove = (event) => {
-    if (!isDragging || !interactiveModel) return;
-
-    const deltaX = event.touches[0].clientX - previousMousePosition.x;
-    const deltaY = event.touches[0].clientY - previousMousePosition.y;
+    const deltaX = x - previousMousePosition.x;
+    const deltaY = y - previousMousePosition.y;
 
     interactiveModel.rotation.y += deltaX * 0.005;
     interactiveModel.rotation.x += deltaY * 0.005;
 
-    previousMousePosition = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+    previousMousePosition = { x, y };
 };
 
-const onTouchEnd = () => {
+const onPointerUp = () => {
     isDragging = false;
 };
 
-// Scroll Zoom Control
+// ✅ Touch and Mouse Events Merged for Cross-Device Support
+window.addEventListener("pointerdown", onPointerDown);
+window.addEventListener("pointermove", onPointerMove);
+window.addEventListener("pointerup", onPointerUp);
+
+// ✅ Fixed Zoom for Mobile (Limits Added)
 const onScroll = (event) => {
-    camera.position.z += event.deltaY * 0.01;
+    camera.position.z = Math.min(25, Math.max(5, camera.position.z + event.deltaY * 0.01));
 };
 
-// Add event listeners
-window.addEventListener("mousedown", onMouseDown);
-window.addEventListener("mousemove", onMouseMove);
-window.addEventListener("mouseup", onMouseUp);
+// ✅ Works with Touchscreen Pinch Gesture
+const onTouchZoom = (event) => {
+    if (event.touches.length === 2) {
+        const touch1 = event.touches[0];
+        const touch2 = event.touches[1];
+
+        const dx = touch1.clientX - touch2.clientX;
+        const dy = touch1.clientY - touch2.clientY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (!onTouchZoom.lastDistance) {
+            onTouchZoom.lastDistance = distance;
+            return;
+        }
+
+        const zoomChange = (distance - onTouchZoom.lastDistance) * 0.01;
+        camera.position.z = Math.min(25, Math.max(5, camera.position.z - zoomChange));
+        onTouchZoom.lastDistance = distance;
+    }
+};
+
+// ✅ Event Listener for Pinch Gesture Zoom
 window.addEventListener("wheel", onScroll);
-window.addEventListener("touchstart", onTouchStart);
-window.addEventListener("touchmove", onTouchMove);
-window.addEventListener("touchend", onTouchEnd);
+window.addEventListener("touchmove", onTouchZoom);
+window.addEventListener("touchend", () => { onTouchZoom.lastDistance = null; });
 
 // Animation Loop
 function animate() {
