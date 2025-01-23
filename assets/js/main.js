@@ -6,7 +6,7 @@ const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById("threeD-container").appendChild(renderer.domElement);
 
-// Load 3D model
+// Load GLTF model
 const loader = new THREE.GLTFLoader();
 loader.load('https://iswsz3cbm7tudiss.public.blob.vercel-storage.com/destroyed_car_07_raw_scan_compressed-pf4BnThyKKJfMbASae84IL1oaxKZP7.glb', (gltf) => {
     const model = gltf.scene;
