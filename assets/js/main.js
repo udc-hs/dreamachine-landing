@@ -44,6 +44,13 @@ window.addEventListener("click", () => {
     }
 });
 
+// Mouse Scroll Zoom Control
+window.addEventListener("wheel", (event) => {
+    const zoomSpeed = 0.5;
+    camera.position.z += event.deltaY * 0.01 * zoomSpeed;
+    camera.position.z = Math.max(5, Math.min(50, camera.position.z)); // Limit zoom range
+});
+
 // Animation Loop
 function animate() {
     requestAnimationFrame(animate);
